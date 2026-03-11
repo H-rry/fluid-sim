@@ -70,21 +70,25 @@ inline void init_fluid( double initial_rho, double  initial_u_x, double initial_
 }
 
 inline bool is_inside_airfoil(int x, int y) noexcept {
-    // Airfoil geometry settings
-    constexpr double chord = 150.0;      // Length of the wing in pixels
-    constexpr double thickness = 0.15;   // 15% thickness (NACA 0015)
-    constexpr double x_start = 150.0;    // X-coordinate of the leading edge
-    constexpr double y_center = 250.0;   // Y-coordinate for the middle of the wing
+    // 1. Scale geometry relative to your grid dimensions
+    double chord = width * 0.4;        // Wing length is 40% of the domain width
+    double x_start = width * 0.25;     // Start wing 25% of the way across the screen
+    double y_center = height * 0.5;    // Center wing vertically
+    
+    // 2. NACA 4415 Airfoil parameters
+    constexpr double thickness = 0.15; // 15% maximum thickness
+    constexpr double m = 0.04;         // 4% maximum camber (This determines the "curve")
+    constexpr double p = 0.4;          // Max camber is located at 40% of the chord length
 
-    // 1. Normalize x position along the chord to a value between 0.0 and 1.0
+    // Normalize x position along the chord (0.0 to 1.0)
     double xc = (x - x_start) / chord;
 
-    // If the pixel is strictly in front of or behind the wing, it's not solid
+    // If pixel is outside the wing's bounding box, skip the heavy math
     if (xc < 0.0 || xc > 1.0) {
         return false;
     }
 
-    // 2. Calculate the NACA half-thickness for this specific 'xc'
+    // 3. Calculate the symmetrical half-thickness (your original math)
     double yt = 5.0 * thickness * (
           0.2969 * std::sqrt(xc) 
         - 0.1260 * xc 
@@ -93,11 +97,24 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
         - 0.1015 * xc * xc * xc * xc
     );
 
-    // 3. Scale the thickness back up to grid pixels
-    double half_thickness_pixels = yt * chord;
+    // 4. Calculate the Camber Line (The asymmetric curve)
+    double yc = 0.0;
+    if (xc >= 0.0 && xc <= p) {
+        yc = (m / (p * p)) * (2.0 * p * xc - xc * xc);
+    } else {
+        yc = (m / ((1.0 - p) * (1.0 - p))) * ((1.0 - 2.0 * p) + 2.0 * p * xc - xc * xc);
+    }
 
-    // 4. Check if the y-coordinate is within the wing's thickness envelope
-    return std::abs(y - y_center) <= half_thickness_pixels;
+    // 5. Scale the normalized math back up to your grid pixels
+    double half_thickness_pixels = yt * chord;
+    double camber_pixels = yc * chord;
+
+    // Calculate the actual Y center for this specific X coordinate
+    // (Adding camber shifts the center line up or down)
+    double wing_center_at_x = y_center + camber_pixels;
+    
+    // 6. Check if the y-coordinate is within the curved envelope
+    return std::abs(y - wing_center_at_x) <= half_thickness_pixels;
 }
 
 inline void step_fluid() noexcept{
