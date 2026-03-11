@@ -44,3 +44,7 @@
 # Ignore compiled binaries
 lbm_gui
 lbm_sim
+
+# Python
+env
+venv
