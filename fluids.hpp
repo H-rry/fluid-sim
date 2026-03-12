@@ -198,17 +198,21 @@ inline void write_frame(std::ofstream& file, int step) {
 }
 
 inline void write_frame_binary(std::ofstream& file) {
-    // Notice we loop Y first, then X. This matches how Python natively reads 2D images!
+    // 1. Create a memory buffer to hold one entire frame of data
+    std::vector<float> frame_buffer(width * height);
+    int index = 0;
+
+    // 2. Loop through the grid and fill the buffer (in RAM, which is lightning fast)
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             double rho, u_x, u_y;
             get_macroscopic(x, y, rho, u_x, u_y);
             
-            // Calculate velocity magnitude (speed) and cast to a 32-bit float
-            float speed = static_cast<float>(std::sqrt(u_x*u_x + u_y*u_y));
-            
-            // Write the raw 4 bytes of the float directly to the hard drive
-            file.write(reinterpret_cast<const char*>(&speed), sizeof(float));
+            frame_buffer[index] = static_cast<float>(std::sqrt(u_x*u_x + u_y*u_y));
+            index++;
         }
     }
+    
+    // 3. Write the ENTIRE buffer to the hard drive in exactly ONE function call!
+    file.write(reinterpret_cast<const char*>(frame_buffer.data()), frame_buffer.size() * sizeof(float));
 }
