@@ -1,6 +1,6 @@
 # --- Variables ---
 CXX = g++
-CXXFLAGS = -O3 -Wall -Wextra
+CXXFLAGS = -O3 -fopenmp -Wall -Wextra
 
 # Target executable names
 GUI_TARGET = lbm_gui
