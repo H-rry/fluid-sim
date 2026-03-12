@@ -13,8 +13,6 @@ int main(){
 
 
     std::ofstream outfile("simulation_data.bin");
-    outfile << "step,x,y,u_x,u_y,rho\n"; // Header row
-
 
     int max_steps = 10000;
     int save_frequency = 50;
