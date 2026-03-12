@@ -28,7 +28,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 ax.set_facecolor('black')
 
 # Frame 0 is just grid_data[0]
-cax = ax.imshow(grid_data[0], origin='lower', cmap='magma', vmin=0.0, vmax=0.07)
+cax = ax.imshow(grid_data[0], origin='lower', cmap='magma', vmin=0.0, vmax=0.085)
 ax.set_title("LBM Airfoil Wake (15 deg AoA)")
 fig.colorbar(cax, ax=ax, label="Velocity Magnitude (Lattice Units)", fraction=0.046, pad=0.04)
 

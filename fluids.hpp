@@ -5,8 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
-
-
+#include <omp.h>
 
 
 constexpr int width = 500;
@@ -141,6 +140,8 @@ inline void step_fluid() noexcept{
 
     std::fill(NextGrid.begin(), NextGrid.end(), 0.0);
     
+
+    #pragma omp parallel for collapse(2) schedule(static)
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {                
             bool is_current_solid = is_inside_airfoil(x, y);
@@ -179,7 +180,7 @@ inline void step_fluid() noexcept{
 
     for(int y = 0; y< height; ++y){
         for (int i = 0; i < 9; ++i){
-            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.05, 0.0);
+            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.075, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
         }
     }

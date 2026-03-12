@@ -4,7 +4,6 @@
 #include <fstream>
 #include <chrono>
 
-
 int main(){
     std::cout << "Initialising..." <<"\r";
     double initial_rho = 1.0;
