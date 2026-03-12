@@ -13,7 +13,7 @@ int main(){
     init_fluid(initial_rho, initial_u_x, initial_u_y);
 
 
-    std::ofstream outfile("simulation_data.csv");
+    std::ofstream outfile("simulation_data.bin");
     outfile << "step,x,y,u_x,u_y,rho\n"; // Header row
 
 
