@@ -2,7 +2,7 @@
 #include "fluids.hpp"
 #include <sstream>
 #include <fstream>
-
+#include <chrono>
 
 
 int main(){
@@ -21,16 +21,21 @@ int main(){
     int save_frequency = 50;
     std::cout << "Starting simulation for " << max_steps << " steps..." << std::endl;
 
+    auto start = std::chrono::high_resolution_clock::now();
     for(int t = 0; t<max_steps; ++t){
-
         if (t % save_frequency == 0) {
             std::cout << "Saving step: " << t << " to master file..." << std::endl;
             write_frame(outfile, t); 
         }
         step_fluid();
-
     }
-    std::cout << "Simulation complete!" << std::endl;
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // 3. Calculate duration
+    std::chrono::duration<double> duration = end - start;
+
+    std::cout << "Elapsed time: " << duration.count() << "s" << std::endl;
     return 0;
 }
 

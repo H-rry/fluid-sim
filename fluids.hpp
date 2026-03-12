@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
-#include <omp>
+
 
 
 
@@ -71,24 +71,46 @@ inline void init_fluid( double initial_rho, double  initial_u_x, double initial_
 
 inline bool is_inside_airfoil(int x, int y) noexcept {
     // 1. Scale geometry relative to your grid dimensions
-    double chord = width * 0.4;        // Wing length is 40% of the domain width
-    double x_start = width * 0.25;     // Start wing 25% of the way across the screen
-    double y_center = height * 0.5;    // Center wing vertically
+    double chord = width * 0.4;        
+    double x_start = width * 0.25;     
+    double y_center = height * 0.5;    
     
-    // 2. NACA 4415 Airfoil parameters
-    constexpr double thickness = 0.15; // 15% maximum thickness
-    constexpr double m = 0.04;         // 4% maximum camber (This determines the "curve")
-    constexpr double p = 0.4;          // Max camber is located at 40% of the chord length
+    // 2. Angle of Attack (AoA) Setup
+    constexpr double AoA_degrees = 15.0; // Pitch nose UP by 15 degrees
+    constexpr double pi = 3.14159265358979323846;
+    constexpr double AoA_radians = AoA_degrees * pi / 180.0;
+    
+    // 3. Define the Pivot Point (The Aerodynamic Center at 25% chord)
+    double pivot_x = x_start + (chord * 0.25);
+    double pivot_y = y_center;
+    
+    // Get the current node's position relative to the pivot
+    double dx = x - pivot_x;
+    double dy = y - pivot_y;
+    
+    // 4. Apply 2D Rotation Matrix
+    // We rotate the grid coordinates backwards to map them to the flat airfoil math
+    double rot_x = dx * std::cos(AoA_radians) - dy * std::sin(AoA_radians);
+    double rot_y = dx * std::sin(AoA_radians) + dy * std::cos(AoA_radians);
+    
+    double mapped_x = rot_x + pivot_x;
+    double mapped_y = rot_y + pivot_y;
 
-    // Normalize x position along the chord (0.0 to 1.0)
-    double xc = (x - x_start) / chord;
+    // --- The rest is identical to the previous NACA 4415 math ---
+    
+    constexpr double thickness = 0.15; 
+    constexpr double m = 0.04;         
+    constexpr double p = 0.4;          
 
-    // If pixel is outside the wing's bounding box, skip the heavy math
+    // Normalize mapped_x position along the chord (0.0 to 1.0)
+    double xc = (mapped_x - x_start) / chord;
+
+    // If pixel is outside the wing's bounding box, skip
     if (xc < 0.0 || xc > 1.0) {
         return false;
     }
 
-    // 3. Calculate the symmetrical half-thickness (your original math)
+    // Calculate the symmetrical half-thickness
     double yt = 5.0 * thickness * (
           0.2969 * std::sqrt(xc) 
         - 0.1260 * xc 
@@ -97,7 +119,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
         - 0.1015 * xc * xc * xc * xc
     );
 
-    // 4. Calculate the Camber Line (The asymmetric curve)
+    // Calculate the Camber Line
     double yc = 0.0;
     if (xc >= 0.0 && xc <= p) {
         yc = (m / (p * p)) * (2.0 * p * xc - xc * xc);
@@ -105,16 +127,14 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
         yc = (m / ((1.0 - p) * (1.0 - p))) * ((1.0 - 2.0 * p) + 2.0 * p * xc - xc * xc);
     }
 
-    // 5. Scale the normalized math back up to your grid pixels
+    // Scale the normalized math back up to your grid pixels
     double half_thickness_pixels = yt * chord;
     double camber_pixels = yc * chord;
 
-    // Calculate the actual Y center for this specific X coordinate
-    // (Adding camber shifts the center line up or down)
     double wing_center_at_x = y_center + camber_pixels;
     
-    // 6. Check if the y-coordinate is within the curved envelope
-    return std::abs(y - wing_center_at_x) <= half_thickness_pixels;
+    // Check if the mapped_y coordinate is within the curved envelope
+    return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
 
 inline void step_fluid() noexcept{
@@ -161,9 +181,6 @@ inline void step_fluid() noexcept{
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.05, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
-            if (y < 300 && y > 200){
-            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.10, 0.0);
-            }
         }
     }
 }

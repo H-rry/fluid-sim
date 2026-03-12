@@ -48,3 +48,6 @@ lbm_sim
 # Python
 env
 venv
+
+# Gif
+*.gif

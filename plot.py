@@ -30,7 +30,7 @@ ax.set_facecolor('black') # Makes the dark edges look sleek
 # Initialize the first frame
 # We use 'magma' or 'jet' for that classic CFD heat-map look
 initial_grid = df[df['step'] == steps[0]]['speed'].values.reshape((height, width))
-cax = ax.imshow(initial_grid, cmap='magma', origin='lower', vmin=0, vmax=0.15)
+cax = ax.imshow(initial_grid, cmap='magma', origin='lower', vmin=0, vmax=0.07)
 
 ax.set_title("LBM Airfoil Wake")
 fig.colorbar(cax, ax=ax, label="Velocity Magnitude (Lattice Units)", fraction=0.046, pad=0.04)
