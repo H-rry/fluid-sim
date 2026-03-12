@@ -196,3 +196,19 @@ inline void write_frame(std::ofstream& file, int step) {
         }
     }
 }
+
+inline void write_frame_binary(std::ofstream& file) {
+    // Notice we loop Y first, then X. This matches how Python natively reads 2D images!
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            double rho, u_x, u_y;
+            get_macroscopic(x, y, rho, u_x, u_y);
+            
+            // Calculate velocity magnitude (speed) and cast to a 32-bit float
+            float speed = static_cast<float>(std::sqrt(u_x*u_x + u_y*u_y));
+            
+            // Write the raw 4 bytes of the float directly to the hard drive
+            file.write(reinterpret_cast<const char*>(&speed), sizeof(float));
+        }
+    }
+}

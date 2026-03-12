@@ -25,7 +25,7 @@ int main(){
     for(int t = 0; t<max_steps; ++t){
         if (t % save_frequency == 0) {
             std::cout << "Saving step: " << t << " to master file..." << std::endl;
-            write_frame(outfile, t); 
+            write_frame_binary(outfile, t); 
         }
         step_fluid();
     }
