@@ -1,24 +1,22 @@
 #!/bin/bash
-#SBATCH --job-name=fluid_sim_bench
+#SBATCH --job-name=fluid_gpu_bench
+#SBATCH --partition=1CN192C4G1H_MI300A_Ubuntu22   
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=48
-#SBATCH --time=02:00:00
+#SBATCH --cpus-per-task=1       # We don't need 48 CPU cores anymore!
+#SBATCH --gres=gpu:1            # <--- ADD THIS: Request 1 full MI300A GPU!
+#SBATCH --time=00:30:00               
 #SBATCH --output=logs/%j_out.txt
 #SBATCH --error=logs/%j_err.txt
-#SBATCH --partition=1CN48C6G1H_MI300A_Ubuntu22
-# Run the C++ Simulation
-echo "Starting Serial LBM Simulation..."
-#module load rocm
-#rocprof-sys-run --trace -- ./lbm_sim
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-export OMP_PLACES=cores
-export OMP_PROC_BIND=close
 
+# 1. We must add the ROCm compiler to our path so 'make' can find amdclang++
+export PATH=/shared/apps/ubuntu/opt/rocm-7.2.0/llvm/bin:$PATH
+
+# 2. Run the simulation
 ./lbm_sim
-# Activate Python and render the video
+
+# 3. Render the video
 echo "Simulation complete! Rendering video..."
-source venv/bin/activate
-python3 plot.py
+./venv/bin/python3 plot.py
 
 echo "Pipeline finished completely!"

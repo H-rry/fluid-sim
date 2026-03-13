@@ -1,11 +1,17 @@
 # --- Variables ---
-CXX = g++
-CXXFLAGS = -O3 -fopenmp -Wall -Wextra
+# Swap to AMD's LLVM compiler
+CXX = amdclang++ 
+
+# The GPU Offloading Flags!
+# -fopenmp-targets tells it to build for AMD GPUs
+# -Xopenmp-target -march=gfx942 tells it specifically to build for the MI300A
+CXXFLAGS = -O3 -g -Wall -Wextra -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=gfx942
 
 # Target executable names
 GUI_TARGET = lbm_gui
 SIM_TARGET = lbm_sim
 
+# ... (keep your rules the exact same below this) ...
 # --- Rules ---
 
 # 1. The default rule if you just type 'make' (builds both!)
