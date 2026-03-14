@@ -32,7 +32,7 @@ inline int get_index(int x,int y,int q) noexcept{    // helper function to take 
     return x*height*9 + y*9 + q;
 } 
 
-inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y) noexcept {
+inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y) noexcept { // returns the current total x & y velocities, density of fluid at a point
     rho = 0.0;
     double momentum_x = 0.0;
     double momentum_y = 0.0;
@@ -40,15 +40,13 @@ inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y)
     for (int i = 0; i < 9; ++i) {
         double f = Grid[get_index(x, y, i)];
 
-        rho += f;
-        momentum_x += f*cx[i];
+        rho += f; // literally adding up the amount of stuff in each cell, regardless of direction
+        momentum_x += f*cx[i]; // momentum at a point in the x direction == fraction of mass moving in x direction
         momentum_y += f*cy[i];        
     }
 
-    double rho_inverse = 1.0/rho;
-
-    u_x = rho_inverse*momentum_x;
-    u_y = rho_inverse*momentum_y;
+    u_x = momentum_x/rho;
+    u_y = momentum_y/rho;
 }
 
 inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcept {
@@ -138,10 +136,12 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
 
 inline void step_fluid() noexcept{
 
-    std::fill(NextGrid.begin(), NextGrid.end(), 0.0);
+    std::fill(NextGrid.begin(), NextGrid.end(), 0.0); // reset next grid
     
 
-    #pragma omp parallel for collapse(2) schedule(static)
+    #pragma omp parallel for collapse(2) schedule(static) // parallel means runi in parallel, for means split up and don't do the same work,
+                                                          // dollapse(2) takes a 2D loop and collapses it into 1D, Static means that it
+                                                          //  doesnt split up dynamically, does it befrore a calculation has even start 
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {                
             bool is_current_solid = is_inside_airfoil(x, y);
@@ -149,8 +149,6 @@ inline void step_fluid() noexcept{
             
             double rho, u_x, u_y;                
             get_macroscopic(x, y, rho, u_x, u_y);
-
-
 
 
             for (int i = 0; i < 9; ++i) {
@@ -182,18 +180,6 @@ inline void step_fluid() noexcept{
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.075, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
-        }
-    }
-}
-
-inline void write_frame(std::ofstream& file, int step) {
-    for (int x = 0; x < width; ++x) {
-        for (int y = 0; y < height; ++y) {
-            double rho, u_x, u_y;
-            get_macroscopic(x, y, rho, u_x, u_y);
-            
-            // We added 'step' as the first column
-            file << step << "," << x << "," << y << "," << u_x << "," << u_y << "," << rho << "\n";
         }
     }
 }
