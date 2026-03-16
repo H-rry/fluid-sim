@@ -28,8 +28,8 @@ int main(int argc, char** argv){
     total_nodes = width * height * 9;
     Grid = new double[total_nodes];
     NextGrid = new double[total_nodes];
-    int max_steps = argv[5];
-    int save_frequency = argv[6];
+    int max_steps = std::stoi(argv[5]);
+    int save_frequency = std::stoi(argv[6]);
 
     double initial_rho = 1.0;
     double initial_u_x = 0.0;
