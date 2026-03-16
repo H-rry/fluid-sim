@@ -13,7 +13,7 @@ export OMP_PROC_BIND=close
 
 
 echo "Starting simulation"
-./lbm_sim
+./lbm_sim_cpu
 
 
 

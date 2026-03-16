@@ -13,7 +13,7 @@
 export PATH=/shared/apps/ubuntu/opt/rocm-7.2.0/llvm/bin:$PATH
 
 # 2. Run the simulation
-./lbm_sim
+./lbm_sim_gpu
 
 # 3. Render the video
 echo "Simulation complete! Rendering video..."

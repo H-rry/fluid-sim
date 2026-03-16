@@ -1,5 +1,5 @@
 #include <iostream>
-#include "fluids.hpp"
+#include "fluids_cpu.hpp"
 #include <sstream>
 #include <fstream>
 #include <chrono>
