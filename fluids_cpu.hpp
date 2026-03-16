@@ -132,7 +132,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
 
-inline void step_fluid() noexcept{
+inline void step_fluid(int t) noexcept{
 
     #pragma omp parallel for    // parallelised resetting of nextgrid
     for (int i = 0; i < total_nodes; ++i) NextGrid[i] = 0.0;    
@@ -177,10 +177,13 @@ inline void step_fluid() noexcept{
     NextGrid = temp;
 
     // Boundary conditions
+    if (t < 1000){
+        speed = wind_speed * t / 1000
+    }
     #pragma omp parallel for
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
-            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);
+            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, speed, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
         }
     }

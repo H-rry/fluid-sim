@@ -53,7 +53,7 @@ int main(int argc, char** argv){
         if (t % save_frequency == 0) {
             write_frame_binary(outfile); 
         }
-        step_fluid();
+        step_fluid(t);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
