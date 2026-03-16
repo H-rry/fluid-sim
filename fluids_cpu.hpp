@@ -18,6 +18,7 @@ extern double omega;       // Collision frequency - computationaly cheaper to mu
 extern int total_nodes; // This is the total number of values that are needed to describe the system
 extern double* Grid;
 extern double* NextGrid;
+double speed;
 
 constexpr int cx[9] = {0, 1,  0, -1,  0, 1, -1, -1,  1};    // direction vectors *Still* E N W S NE NW SW SE 
 constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
@@ -177,8 +178,7 @@ inline void step_fluid(int t) noexcept{
     NextGrid = temp;
 
     // Boundary conditions
-    double speed;
-    if (t < 1000){
+    if (t < 10001){
         speed = wind_speed * t / 1000;
     }
     #pragma omp parallel for
