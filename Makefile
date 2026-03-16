@@ -22,10 +22,10 @@ GPU_TARGET = gpu
 all: $(CPU_TARGET)
 
 $(CPU_TARGET): main_sim_cpu.cpp fluids_cpu.hpp
-	$(CXX) $(CXXFLAGS) main_sim.cpp -o lbm_sim_cpu
+	$(CXX) $(CXXFLAGS) main_sim_cpu.cpp -o lbm_sim_cpu
 
 $(GPU_TARGET): main_sim_gpu.cpp fluids_gpu.hpp
-	$(GXX) $(GXXFLAGS) main_sim.cpp -o lbm_sim_gpu
+	$(GXX) $(GXXFLAGS) main_sim_gpu.cpp -o lbm_sim_gpu
 
 # 4. Clean up everything
 clean:	
