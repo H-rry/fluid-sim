@@ -177,6 +177,7 @@ inline void step_fluid() noexcept{
     NextGrid = temp;
 
     // Boundary conditions
+    #pragma omp parallel for
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);

@@ -19,6 +19,10 @@ int save_frequency;
 
 
 int main(int argc, char** argv){
+    if (argc < 7) {
+        std::cerr << "Usage: ./lbm_sim_gpu <width> <height> <wind> <tau> <steps> <save_freq>\n";
+        return 1;
+    }
  
     width = std::stoi(argv[1]);
     height = std::stoi(argv[2]);
@@ -28,8 +32,8 @@ int main(int argc, char** argv){
     total_nodes = width * height * 9;
     Grid = new double[total_nodes];
     NextGrid = new double[total_nodes];
-    int max_steps = std::stoi(argv[5]);
-    int save_frequency = std::stoi(argv[6]);
+    max_steps = std::stoi(argv[5]);
+    save_frequency = std::stoi(argv[6]);
 
 
     double initial_rho = 1.0;
