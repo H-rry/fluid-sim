@@ -4,13 +4,15 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 import time
+import sys
+
 
 print("Starting render")
 start_time = time.time()
 
-width = 500
-height = 500        
-initial_u_x = 0.075 # Left velocity in the wind tunnel
+width = sys.argv[1]
+height = sys.argv[2]
+initial_u_x = sys.argv[3]# Left velocity in the wind tunnel
 
 
 data = np.fromfile('simulation_data.bin', dtype=np.float32)
