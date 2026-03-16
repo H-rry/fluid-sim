@@ -38,6 +38,6 @@ def animate(i):
 
 
 ani = animation.FuncAnimation(fig, animate, frames=num_frames, blit=True)
-ani.save('wake_video.gif', fps=15, writer='pillow')
+ani.save(f'{sys.argv[4]}/wake_video.gif', fps=15, writer='pillow')
 
 print(f"Done! Video saved in {round(time.time() - start_time, 1)} seconds.")

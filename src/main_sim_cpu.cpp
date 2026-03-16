@@ -41,8 +41,8 @@ int main(int argc, char** argv){
     double initial_u_y = 0.0;
     init_fluid(initial_rho, initial_u_x, initial_u_y);
 
-
-    std::ofstream outfile("simulation_data.bin", std::ios::out | std::ios::binary);
+    
+    std::ofstream outfile(std::string(argv[7]) + "/simulation_data.bin", std::ios::out | std::ios::binary);
 
     
     std::cout << "Starting simulation for " << max_steps << " steps..." << std::endl;
