@@ -177,6 +177,7 @@ inline void step_fluid(int t) noexcept{
     NextGrid = temp;
 
     // Boundary conditions
+    double speed;
     if (t < 1000){
         speed = wind_speed * t / 1000
     }
