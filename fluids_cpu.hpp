@@ -8,28 +8,23 @@
 #include <omp.h>
 
 
-void set_environment_conditions(str width, str height, str wind_speed, str tau){
-int width = std::stoi(width);
-int height = std::stoi(height);
-float wind_speed = std::stod(wind_speed);
-double tau = std::stod(tau);    // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
-double omega = 1.0 / tau;       // Collision frequency - computationaly cheaper to multiply than divide
-}
+extern int width;
+extern int height;
+extern float wind_speed;
 
-int total_nodes = width * height * 9; // This is the total number of values that are needed to describe the system
+extern double tau;    // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
+extern double omega;       // Collision frequency - computationaly cheaper to multiply than divide
 
+extern int total_nodes; // This is the total number of values that are needed to describe the system
+extern double* Grid;
+extern double* NextGrid;
 
 constexpr int cx[9] = {0, 1,  0, -1,  0, 1, -1, -1,  1};    // direction vectors *Still* E N W S NE NW SW SE 
 constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
 // store them as seperate arrays as it is computationally effecient for a CPU to access continous memory X, X, X, ... instead of a 2D array. X. Y. X. Y, ... 
 
-
 constexpr double w[9] = {4.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/36.0, 1.0/36.0, 1.0/36.0, 1.0/36.0};  // Base resting distributexprion
 constexpr int opp[9] = {0, 3, 4, 1, 2, 7, 8, 5, 6};
-
-
-std::vector<double> Grid(total_nodes, 0.0);
-std::vector<double> NextGrid(total_nodes, 0.0);
 
 inline int get_index(int x,int y,int q) noexcept{    // helper function to take our cartesian coords and "flatten" them, a 1D array is more computationally efficient
     return x*height*9 + y*9 + q;
@@ -137,10 +132,10 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
 
-inline void step_fluid() noexcept{  // 
+inline void step_fluid() noexcept{
 
-    std::fill(NextGrid.begin(), NextGrid.end(), 0.0); // reset next grid
-    
+    #pragma omp parallel for    // parallelised resetting of nextgrid
+    for (int i = 0; i < total_nodes; ++i) NextGrid[i] = 0.0;    
 
     #pragma omp parallel for collapse(2) schedule(static) // parallel means runs in parallel, for means split up and don't do the same work,
                                                           // collapse(2) takes a 2D loop and collapses it into 1D, Static means that it
@@ -177,8 +172,11 @@ inline void step_fluid() noexcept{  //
             }
         }
     }
-    Grid = NextGrid; 
+    double* temp = Grid;    // move the pointer of NextGrid to be off Grid2
+    Grid = NextGrid;
+    NextGrid = temp;
 
+    // Boundary conditions
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);

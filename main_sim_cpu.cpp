@@ -5,10 +5,18 @@
 #include <chrono>
 
 int main(int argc, char** argv){
-    set_environment_conditions(argv[1], argv[2], argv[3], argv[4])
-
+ 
+    width = std::stoi(argv[1]);
+    height = std::stoi(argv[2]);
+    wind_speed = std::stod(argv[3]);
+    tau = std::stod(argv[4]);
+    omega = 1.0 / tau;
+    total_nodes = width * height * 9;
+    Grid = new double[total_nodes];
+    NextGrid = new double[total_nodes];
+    
     double initial_rho = 1.0;
-    double initial_u_x = 0.00;
+    double initial_u_x = 0.0;
     double initial_u_y = 0.0;
     init_fluid(initial_rho, initial_u_x, initial_u_y);
 
@@ -33,6 +41,9 @@ int main(int argc, char** argv){
     std::cout << "Elapsed time: " << duration.count() << "s" << std::endl;
     
     outfile.close();
+
+    delete[] Grid;
+    delete[] NextGrid;
     
     return 0;
 }

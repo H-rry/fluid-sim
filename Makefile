@@ -14,8 +14,8 @@ CXX = g++
 CXXFLAGS = -O3 -fopenmp -Wall -Wextra
 
 # Target executable names
-CPU_TARGET = CPU
-GPU_TARGET = GPU
+CPU_TARGET = cpu
+GPU_TARGET = gpu
 
 
 # If I type make it builds the CPU version

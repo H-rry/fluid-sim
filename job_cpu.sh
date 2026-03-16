@@ -15,15 +15,15 @@ export OMP_PROC_BIND=close
 WIDTH=500
 HEIGHT=500
 INITIAL_U_X=0.075
-
+TAU=0.55
 
 echo "Starting simulation"
-./lbm_sim_cpu
+./lbm_sim_cpu $WIDTH $HEIGHT $INITIAL_U_X $TAU
 
 
 
 echo "Simulation complete, Rendering video..."
 source venv/bin/activate
-python3 plot.py 500 500 0.075
+python3 plot.py $WIDTH $HEIGHT $INITIAL_U_X
 
 echo "Render finished"
