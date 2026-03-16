@@ -14,6 +14,8 @@ int total_nodes;
 
 double* Grid;     
 double* NextGrid;
+int max_steps;
+int save_frequency;
 
 
 int main(int argc, char** argv){
@@ -26,7 +28,9 @@ int main(int argc, char** argv){
     total_nodes = width * height * 9;
     Grid = new double[total_nodes];
     NextGrid = new double[total_nodes];
-    
+    int max_steps = argv[5];
+    int save_frequency = argv[6];
+
     double initial_rho = 1.0;
     double initial_u_x = 0.0;
     double initial_u_y = 0.0;
@@ -35,8 +39,7 @@ int main(int argc, char** argv){
 
     std::ofstream outfile("simulation_data.bin", std::ios::out | std::ios::binary);
 
-    int max_steps = 10000;
-    int save_frequency = 50;
+    
     std::cout << "Starting simulation for " << max_steps << " steps..." << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
