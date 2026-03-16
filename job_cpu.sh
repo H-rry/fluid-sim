@@ -25,7 +25,7 @@ echo "Starting simulation"
 
 
 echo "Simulation complete, Rendering video..."
-source venv/bin/activate
-python3 plot.py $WIDTH $HEIGHT $INITIAL_U_X
+
+./venv/bin/python plot.py $WIDTH $HEIGHT $INITIAL_U_X
 
 echo "Render finished"
