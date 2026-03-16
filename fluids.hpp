@@ -20,7 +20,7 @@ constexpr double w[9] = {4.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/36.0, 
 constexpr int opp[9] = {0, 3, 4, 1, 2, 7, 8, 5, 6};
 
 
-constexpr double tau = 0.55;          // Viscosity - adjustable
+constexpr double tau = 0.55;         // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
 constexpr double omega = 1.0 / tau;  // Collision frequency - computationaly cheaper to multiply than divide
 
 constexpr int total_nodes = width * height * 9; // This is the total number of values that are needed to describe the system
@@ -49,14 +49,14 @@ inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y)
     u_y = momentum_y/rho;
 }
 
-inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcept {
+inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcept { // Returns where the fluid wants to be, the "ideal" state
     double cu = cx[i] * u_x + cy[i] * u_y; 
     double u_squared = u_x*u_x + u_y*u_y;
 
     return w[i] * rho * (1.0 + 3.0*cu + 4.5*cu*cu - 1.5*u_squared);
 }
 
-inline void init_fluid( double initial_rho, double  initial_u_x, double initial_u_y) noexcept {
+inline void init_fluid( double initial_rho, double  initial_u_x, double initial_u_y) noexcept { // inits the fluid with given values
     for (int x = 0; x < width; ++x){
         for (int y = 0; y < height; ++y){
             for(int i = 0; i<9; ++i){
@@ -134,14 +134,14 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
 
-inline void step_fluid() noexcept{
+inline void step_fluid() noexcept{  // 
 
     std::fill(NextGrid.begin(), NextGrid.end(), 0.0); // reset next grid
     
 
-    #pragma omp parallel for collapse(2) schedule(static) // parallel means runi in parallel, for means split up and don't do the same work,
-                                                          // dollapse(2) takes a 2D loop and collapses it into 1D, Static means that it
-                                                          //  doesnt split up dynamically, does it befrore a calculation has even start 
+    #pragma omp parallel for collapse(2) schedule(static) // parallel means runs in parallel, for means split up and don't do the same work,
+                                                          // collapse(2) takes a 2D loop and collapses it into 1D, Static means that it
+                                                          // doesnt split up dynamically, does it befrore a calculation has even started
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {                
             bool is_current_solid = is_inside_airfoil(x, y);
@@ -156,19 +156,19 @@ inline void step_fluid() noexcept{
                 double f = Grid[get_index(x, y, i)];
                 double feq = get_equilibrium(i, rho, u_x, u_y);
                 
-                double f_post = f - omega*(f - feq);
+                double f_post = f - omega*(f - feq);    // edits the next value so it's like f -> a closer value to the equilibrium
                 int nx = x + cx[i];
                 int ny = y + cy[i];
                 
                 bool is_destination_solid = is_inside_airfoil(nx, ny);
                 
-                if (is_destination_solid) {
+                if (is_destination_solid) { // adds the airfoil
                     NextGrid[get_index(x, y, opp[i])] = f_post;
                 }
                 else if (ny >= 0 && ny < height && nx >= 0 && nx < width){
                     NextGrid[get_index(nx, ny, i)] = f_post; 
                 }
-                else if (nx >= 0 && nx < width){
+                else if (nx >= 0 && nx < width){    // gets here iff on the edge, wind tunnel, closes top and bottom
                     NextGrid[get_index(x, y, opp[i])] = f_post;
                 }
             }
@@ -176,20 +176,19 @@ inline void step_fluid() noexcept{
     }
     Grid = NextGrid; 
 
-    for(int y = 0; y< height; ++y){
+    for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.075, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
         }
-    }
+    }    std::chrono::duration<double> duration = end - start;
+
 }
 
 inline void write_frame_binary(std::ofstream& file) {
-    // 1. Create a memory buffer to hold one entire frame of data
-    std::vector<float> frame_buffer(width * height);
+    std::vector<float> frame_buffer(width * height);    // creates a buffer the size of the data for each save-step
     int index = 0;
 
-    // 2. Loop through the grid and fill the buffer (in RAM, which is lightning fast)
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             double rho, u_x, u_y;
@@ -200,6 +199,6 @@ inline void write_frame_binary(std::ofstream& file) {
         }
     }
     
-    // 3. Write the ENTIRE buffer to the hard drive in exactly ONE function call!
-    file.write(reinterpret_cast<const char*>(frame_buffer.data()), frame_buffer.size() * sizeof(float));
+    file.write(reinterpret_cast<const char*>(frame_buffer.data()), frame_buffer.size() * sizeof(float));    // turns buffer data into bin, size is (buffer size)*(float size)
 }
+

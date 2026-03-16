@@ -52,4 +52,5 @@ venv
 # Gif
 *.gif
 
+# Roc profiling
 roc*
