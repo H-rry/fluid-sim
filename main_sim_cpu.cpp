@@ -4,7 +4,9 @@
 #include <fstream>
 #include <chrono>
 
-int main(){
+int main(int argc, char** argv){
+    set_environment_conditions(argv[1], argv[2], argv[3], argv[4])
+
     double initial_rho = 1.0;
     double initial_u_x = 0.00;
     double initial_u_y = 0.0;

@@ -8,13 +8,16 @@
 #include <omp.h>
 
 
-constexpr int width = 500;
-constexpr int height = 500;
+void set_environment_conditions(str width, str height, str wind_speed, str tau){
+int width = std::stoi(width);
+int height = std::stoi(height);
+float wind_speed = std::stod(wind_speed);
+double tau = std::stod(tau);    // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
+double omega = 1.0 / tau;       // Collision frequency - computationaly cheaper to multiply than divide
+}
 
-constexpr float wind_speed = 0.075;
+int total_nodes = width * height * 9; // This is the total number of values that are needed to describe the system
 
-constexpr double tau = 0.55;         // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
-constexpr double omega = 1.0 / tau;  // Collision frequency - computationaly cheaper to multiply than divide
 
 constexpr int cx[9] = {0, 1,  0, -1,  0, 1, -1, -1,  1};    // direction vectors *Still* E N W S NE NW SW SE 
 constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
@@ -24,7 +27,6 @@ constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
 constexpr double w[9] = {4.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/36.0, 1.0/36.0, 1.0/36.0, 1.0/36.0};  // Base resting distributexprion
 constexpr int opp[9] = {0, 3, 4, 1, 2, 7, 8, 5, 6};
 
-constexpr int total_nodes = width * height * 9; // This is the total number of values that are needed to describe the system
 
 std::vector<double> Grid(total_nodes, 0.0);
 std::vector<double> NextGrid(total_nodes, 0.0);

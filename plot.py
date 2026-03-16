@@ -12,7 +12,7 @@ start_time = time.time()
 
 width = sys.argv[1]
 height = sys.argv[2]
-initial_u_x = sys.argv[3]# Left velocity in the wind tunnel
+estimated_max_u_x = sys.argv[3]*1.15 # Left velocity in the wind tunnel -> threshold for velocities 
 
 
 data = np.fromfile('simulation_data.bin', dtype=np.float32)
@@ -26,7 +26,7 @@ grid_data = data.reshape((num_frames, height, width))
 fig, ax = plt.subplots(figsize=(8, 8))
 ax.set_facecolor('black')
 
-cax = ax.imshow(grid_data[0], origin='lower', cmap='magma', vmin=0.0, vmax=(initial_u_x + 0.05))
+cax = ax.imshow(grid_data[0], origin='lower', cmap='magma', vmin=0.0, vmax=(estimated_max_u_x))
 ax.set_title("LBM wind tunnel simulation")
 fig.colorbar(cax, ax=ax, label="Velocity Magnitude (Lattice Units)", fraction=0.046, pad=0.04)
 
