@@ -19,6 +19,8 @@ extern int total_nodes;    // This is the total number of values that are needed
 extern double* Grid;
 extern double* NextGrid;
 
+#pragma omp declare target // telling the GPU to add it to its memory
+
 constexpr int cx[9] = {0, 1,  0, -1,  0, 1, -1, -1,  1};    // direction vectors *Still* E N W S NE NW SW SE 
 constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
 // store them as seperate arrays as it is computationally effecient for a CPU to access continous memory X, X, X, ... instead of a 2D array. X. Y. X. Y, ... 
@@ -53,6 +55,8 @@ inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcep
 
     return w[i] * rho * (1.0 + 3.0*cu + 4.5*cu*cu - 1.5*u_squared);
 }
+
+#pragma omp end declare target // GPU does not care about initialisation
 
 inline void init_fluid( double initial_rho, double  initial_u_x, double initial_u_y) noexcept {
     for (int x = 0; x < width; ++x){
@@ -137,9 +141,7 @@ inline void step_fluid() noexcept{
     #pragma omp parallel for    // parallelised resetting of nextgrid
     for (int i = 0; i < total_nodes; ++i) NextGrid[i] = 0.0;    
 
-    #pragma omp parallel for collapse(2) schedule(static) // parallel means runs in parallel, for means split up and don't do the same work,
-                                                          // collapse(2) takes a 2D loop and collapses it into 1D, Static means that it
-                                                          // doesnt split up dynamically, does it befrore a calculation has even started
+    #pragma omp target teams distribute parallel for collapse(2)
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {                
             bool is_current_solid = is_inside_airfoil(x, y);
@@ -177,6 +179,8 @@ inline void step_fluid() noexcept{
     NextGrid = temp;
 
     // Boundary conditions
+    #pragma omp target teams distribute parallel for
+
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);
