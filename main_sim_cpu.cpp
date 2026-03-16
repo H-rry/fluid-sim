@@ -4,6 +4,18 @@
 #include <fstream>
 #include <chrono>
 
+
+int width;
+int height;
+float wind_speed;
+double tau;
+double omega;
+int total_nodes;
+
+double* Grid;     
+double* NextGrid;
+
+
 int main(int argc, char** argv){
  
     width = std::stoi(argv[1]);
