@@ -10,6 +10,9 @@ GXX = amdclang++
 # -Xopenmp-target -march=gfx942 tells it specifically to build for the MI300A
 GXXFLAGS = -O3 -g -Wall -Wextra -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=gfx942
 
+CXX = g++
+CXXFLAGS = -O3 -fopenmp -Wall -Wextra
+
 # Target executable names
 CPU_TARGET = CPU
 GPU_TARGET = GPU

@@ -11,6 +11,11 @@
 constexpr int width = 500;
 constexpr int height = 500;
 
+constexpr float wind_speed = 0.075;
+
+constexpr double tau = 0.55;         // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
+constexpr double omega = 1.0 / tau;  // Collision frequency - computationaly cheaper to multiply than divide
+
 constexpr int cx[9] = {0, 1,  0, -1,  0, 1, -1, -1,  1};    // direction vectors *Still* E N W S NE NW SW SE 
 constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
 // store them as seperate arrays as it is computationally effecient for a CPU to access continous memory X, X, X, ... instead of a 2D array. X. Y. X. Y, ... 
@@ -18,10 +23,6 @@ constexpr int cy[9] = {0, 0,  1,  0, -1, 1,  1, -1, -1};    // ^^^^^^^^^^^^^^^^^
 
 constexpr double w[9] = {4.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/36.0, 1.0/36.0, 1.0/36.0, 1.0/36.0};  // Base resting distributexprion
 constexpr int opp[9] = {0, 3, 4, 1, 2, 7, 8, 5, 6};
-
-
-constexpr double tau = 0.55;         // Relaxation time (LBM analogous Viscosity - adjustable) v = c^2(tau - 0.5)     (c is the lattic speed of sound)
-constexpr double omega = 1.0 / tau;  // Collision frequency - computationaly cheaper to multiply than divide
 
 constexpr int total_nodes = width * height * 9; // This is the total number of values that are needed to describe the system
 
@@ -56,7 +57,7 @@ inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcep
     return w[i] * rho * (1.0 + 3.0*cu + 4.5*cu*cu - 1.5*u_squared);
 }
 
-inline void init_fluid( double initial_rho, double  initial_u_x, double initial_u_y) noexcept { // inits the fluid with given values
+inline void init_fluid( double initial_rho, double  initial_u_x, double initial_u_y) noexcept {
     for (int x = 0; x < width; ++x){
         for (int y = 0; y < height; ++y){
             for(int i = 0; i<9; ++i){
@@ -178,7 +179,7 @@ inline void step_fluid() noexcept{  //
 
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
-            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, 0.075, 0.0);
+            Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
         }
     }    std::chrono::duration<double> duration = end - start;
