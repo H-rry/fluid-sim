@@ -31,6 +31,7 @@ int main(int argc, char** argv){
     int max_steps = std::stoi(argv[5]);
     int save_frequency = std::stoi(argv[6]);
 
+
     double initial_rho = 1.0;
     double initial_u_x = 0.0;
     double initial_u_y = 0.0;
