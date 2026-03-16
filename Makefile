@@ -1,24 +1,26 @@
-# --- Variables ---
-# Swap to AMD's LLVM compiler
+# CPU Settings
+# Defaults to standard g++, but allows the user to override it (e.g., with icpc or clang++)
+CXX ?= g++
+CXXFLAGS ?= -O3 -fopenmp -Wall -Wextra
 
-export PATH=/shared/apps/ubuntu/opt/rocm-7.2.0/llvm/bin:$PATH
+# GPU Settings
+# Defaults to clang++, but can be overridden (e.g., nvc++, icpx, amdclang++)
+GXX ?= clang++
 
-GXX = amdclang++ 
+# GPU Offload Flags (Vendor Specific!)
+# Users can override this when calling 'make gpu'
+# Examples:
+#   AMD MI300:   -fopenmp-targets=amdgcn-amd-amdhsa -march=gfx942
+#   NVIDIA A100: -fopenmp-targets=nvptx64-nvidia-cuda -march=sm_80
+#   Intel GPU:   -fiopenmp -fopenmp-targets=spir64
+OFFLOAD_FLAGS ?= -fopenmp-targets=amdgcn-amd-amdhsa -march=gfx942
 
-# The GPU Offloading Flags!
-# -fopenmp-targets tells it to build for AMD GPUs
-# -Xopenmp-target -march=gfx942 tells it specifically to build for the MI300A
-GXXFLAGS = -O3 -g -Wall -Wextra -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=gfx942
+GXXFLAGS ?= -O3 -g -Wall -Wextra -fopenmp $(OFFLOAD_FLAGS)
 
-CXX = g++
-CXXFLAGS = -O3 -fopenmp -Wall -Wextra
-
-# Target executable names
+# --- Targets ---
 CPU_TARGET = cpu
 GPU_TARGET = gpu
 
-
-# If I type make it builds the CPU version
 all: $(CPU_TARGET)
 
 $(CPU_TARGET): main_sim_cpu.cpp fluids_cpu.hpp
@@ -27,6 +29,5 @@ $(CPU_TARGET): main_sim_cpu.cpp fluids_cpu.hpp
 $(GPU_TARGET): main_sim_gpu.cpp fluids_gpu.hpp
 	$(GXX) $(GXXFLAGS) main_sim_gpu.cpp -o lbm_sim_gpu
 
-# 4. Clean up everything
-clean:	
+clean:
 	rm -f lbm_sim_cpu lbm_sim_gpu
