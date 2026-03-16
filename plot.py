@@ -10,9 +10,9 @@ import sys
 print("Starting render")
 start_time = time.time()
 
-width = sys.argv[1]
-height = sys.argv[2]
-estimated_max_u_x = sys.argv[3]*1.15 # Left velocity in the wind tunnel -> threshold for velocities 
+width = int(sys.argv[1])
+height = int(sys.argv[2])
+estimated_max_u_x = float(sys.argv[3])*1.15 # Left velocity in the wind tunnel -> threshold for velocities 
 
 
 data = np.fromfile('simulation_data.bin', dtype=np.float32)
