@@ -71,7 +71,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     double y_center = height * 0.5;    
     
     // 2. Angle of Attack (AoA) Setup
-    constexpr double AoA_degrees = 15.0; // Pitch nose UP by 15 degrees
+    constexpr double AoA_degrees = 5.0; // Pitch nose UP by 15 degrees
     constexpr double pi = 3.14159265358979323846;
     constexpr double AoA_radians = AoA_degrees * pi / 180.0;
     
