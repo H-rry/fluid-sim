@@ -182,7 +182,7 @@ inline void step_fluid() noexcept{
             Grid[get_index(0,y,i)] = get_equilibrium(i, 1, wind_speed, 0.0);
             Grid[get_index(width - 1,y,i)] = Grid[get_index(width - 2, y, i)];
         }
-    }    std::chrono::duration<double> duration = end - start;
+    }
 
 }
 
