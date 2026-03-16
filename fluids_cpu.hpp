@@ -179,7 +179,7 @@ inline void step_fluid(int t) noexcept{
     // Boundary conditions
     double speed;
     if (t < 1000){
-        speed = wind_speed * t / 1000
+        speed = wind_speed * t / 1000;
     }
     #pragma omp parallel for
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
