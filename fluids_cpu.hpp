@@ -181,6 +181,9 @@ inline void step_fluid(int t) noexcept{
     if (t < 10001){
         speed = wind_speed * (static_cast<double>(t) / 10000.0);
     }
+    else{
+        speed = wind_speed;
+    }
     #pragma omp parallel for
     for(int y = 0; y< height; ++y){ // adds slow wind from left to right
         for (int i = 0; i < 9; ++i){
