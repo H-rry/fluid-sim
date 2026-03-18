@@ -20,3 +20,8 @@ echo "Simulation complete! Rendering video..."
 ./venv/bin/python3 plot.py
 
 echo "Pipeline finished completely!"
+
+
+if [ ! -s "logs/${SLURM_JOB_ID}_err.txt" ]; then
+    rm "logs/${SLURM_JOB_ID}_err.txt"
+fi
