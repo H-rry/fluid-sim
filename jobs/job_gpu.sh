@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=1       # We don't need 48 CPU cores anymore!
 #SBATCH --gres=gpu:1            # <--- ADD THIS: Request 1 full MI300A GPU!
 #SBATCH --time=00:30:00               
-#SBATCH --output=logs/%j_out.txt
-#SBATCH --error=logs/%j_err.txt
+#SBATCH --output=logs/%j/%j_out.txt
+#SBATCH --error=logs/%j/%j_err.txt
 
 # 1. We must add the ROCm compiler to our path so 'make' can find amdclang++
 export PATH=/shared/apps/ubuntu/opt/rocm-7.2.0/llvm/bin:$PATH

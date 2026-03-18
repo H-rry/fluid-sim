@@ -4,8 +4,8 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=128            
 #SBATCH --time=02:00:00               
-#SBATCH --output=%j/%j_out.txt
-#SBATCH --error=%j/%j_err.txt
+#SBATCH --output=logs/%j/%j_out.txt
+#SBATCH --error=logs/%j/%j_err.txt
 cd $SLURM_SUBMIT_DIR # Goes back to original directory to run job - so it can see the venv
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK

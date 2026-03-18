@@ -1,6 +1,8 @@
 # fluid-sim
 A fast C++ fluid simulation designed specifically to learn the parallelisation process on HPCs
 
+
+
 ## Instructions and initial set-up
 ___
 ```Bash
