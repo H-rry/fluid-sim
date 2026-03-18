@@ -40,7 +40,7 @@ inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y)
     for (int i = 0; i < 9; ++i) {
         double f = Grid[get_index(x, y, i)];
 
-        rho += f; // literally adding up the amount of stuff in each cell, regardless of direction
+        rho += f;              // literally adding up the amount of stuff in each cell, regardless of direction
         momentum_x += f*cx[i]; // momentum at a point in the x direction == fraction of mass moving in x direction
         momentum_y += f*cy[i];        
     }
@@ -49,7 +49,7 @@ inline void get_macroscopic(int x, int y, double& rho, double& u_x, double& u_y)
     u_y = momentum_y/rho;
 }
 
-inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcept { // Returns where the fluid wants to be, the "ideal" state
+inline double get_equilibrium(int i, double rho, double u_x, double u_y) noexcept {         // Returns where the fluid wants to be, the "ideal" state
     double cu = cx[i] * u_x + cy[i] * u_y; 
     double u_squared = u_x*u_x + u_y*u_y;
 
