@@ -17,17 +17,17 @@ OFFLOAD_FLAGS ?= -fopenmp-targets=amdgcn-amd-amdhsa -march=gfx942
 
 GXXFLAGS ?= -O3 -g -Wall -Wextra -fopenmp $(OFFLOAD_FLAGS)
 
-# --- Targets ---
+# Targets 
 CPU_TARGET = cpu
 GPU_TARGET = gpu
 
 all: $(CPU_TARGET)
 
-$(CPU_TARGET): main_sim_cpu.cpp fluids_cpu.hpp
-	$(CXX) $(CXXFLAGS) main_sim_cpu.cpp -o lbm_sim_cpu
+$(CPU_TARGET): src/main_sim_cpu.cpp src/fluids_cpu.hpp
+	$(CXX) $(CXXFLAGS) src/main_sim_cpu.cpp -o lbm_sim_cpu
 
-$(GPU_TARGET): main_sim_gpu.cpp fluids_gpu.hpp
-	$(GXX) $(GXXFLAGS) main_sim_gpu.cpp -o lbm_sim_gpu
+$(GPU_TARGET): src/main_sim_gpu.cpp src/fluids_gpu.hpp
+	$(GXX) $(GXXFLAGS) src/main_sim_gpu.cpp -o lbm_sim_gpu
 
 clean:
 	rm -f lbm_sim_cpu lbm_sim_gpu
