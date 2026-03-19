@@ -29,6 +29,6 @@ python plot.py $WIDTH $HEIGHT $INITIAL_U_X $SLURM_JOB_ID
 
 echo "Render finished"
 
-if [ ! -s "logs/err.txt" ]; then
+if [ ! -s "./logs/${SLURM_JOB_ID}/err.txt" ]; then
     rm "logs/err.txt"
 fi

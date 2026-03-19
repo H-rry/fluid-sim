@@ -22,6 +22,6 @@ python plot.py
 echo "Pipeline finished completely!"
 
 
-if [ ! -s "logs/err.txt" ]; then
+if [ ! -s "logs/${SLURM_JOB_ID}/err.txt" ]; then
     rm "logs/err.txt"
 fi
