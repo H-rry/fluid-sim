@@ -23,5 +23,5 @@ echo "Pipeline finished completely!"
 
 
 if [ ! -s "logs/${SLURM_JOB_ID}/err.txt" ]; then
-    rm "logs/err.txt"
+    rm "logs/${SLURM_JOB_ID}/err.txt"
 fi
