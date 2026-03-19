@@ -15,7 +15,7 @@ height = int(sys.argv[2])
 estimated_max_u_x = float(sys.argv[3])*1.15 # Left velocity in the wind tunnel -> threshold for velocities 
 
 
-data = np.fromfile('simulation_data.bin', dtype=np.float32)
+data = np.fromfile(f"logs/{sys.argv[4]}/simulation_data.bin", dtype=np.float32)
 
 nodes_per_frame = width * height
 num_frames = len(data) // nodes_per_frame
