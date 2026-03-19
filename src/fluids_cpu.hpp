@@ -72,7 +72,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     double y_center = height * 0.5;    
     
     // 2. Angle of Attack (AoA) Setup
-    constexpr double AoA_degrees = 5.0; // Pitch nose UP by 15 degrees
+    constexpr double AoA_degrees = 10.0; // Pitch nose UP by 15 degrees
     constexpr double pi = 3.14159265358979323846;
     constexpr double AoA_radians = AoA_degrees * pi / 180.0;
     
@@ -94,7 +94,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
 
     // --- The rest is identical to the previous NACA 4415 math ---
     
-    constexpr double thickness = 0.15; 
+    constexpr double thickness = 0.075; 
     constexpr double m = 0.04;         
     constexpr double p = 0.4;          
 
