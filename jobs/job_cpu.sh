@@ -7,6 +7,8 @@
 #SBATCH --output=logs/%j/out.txt
 #SBATCH --error=logs/%j/err.txt
 
+cd $SLURM_SUBMIT_DIR
+
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_PLACES=cores
 export OMP_PROC_BIND=close
@@ -24,7 +26,8 @@ echo "Starting simulation"
 
 echo "Simulation complete, Rendering video..."
 
-./venv/bin/python3 plot.py $WIDTH $HEIGHT $INITIAL_U_X $SLURM_JOB_ID
+source venv/bin/activate
+python plot.py $WIDTH $HEIGHT $INITIAL_U_X $SLURM_JOB_ID
 
 echo "Render finished"
 
