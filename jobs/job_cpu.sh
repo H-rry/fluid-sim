@@ -6,7 +6,6 @@
 #SBATCH --time=02:00:00               
 #SBATCH --output=logs/%j/out.txt
 #SBATCH --error=logs/%j/err.txt
-cd $SLURM_SUBMIT_DIR # Goes back to original directory to run job - so it can see the venv
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_PLACES=cores
