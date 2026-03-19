@@ -21,3 +21,20 @@ sbatch job_cpu/gpu
 
 # You can then sftp/scp the GIF onto your sytem to view it
 ```
+## Troubleshooting
+___
+**Issue:** `python: command not found` when running job scripts
+
+**Cause:** HPC compute nodes typically only have `python3`, not `python`.
+
+**Fix:** If you encounter this error, run:
+```bash
+rm venv/bin/python venv/bin/python3 venv/bin/python3.10
+ln -s /usr/bin/python3 venv/bin/python
+ln -s python venv/bin/python3
+ln -s python venv/bin/python3.10
+source venv/bin/activate
+pip install -r requirements.txt
+deactivate
+```
+
