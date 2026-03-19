@@ -19,8 +19,8 @@ int save_frequency;
 
 
 int main(int argc, char** argv){
-    if (argc < 7) {
-        std::cerr << "Usage: ./lbm_sim_gpu <width> <height> <wind> <tau> <steps> <save_freq>\n";
+    if (argc < 8) {
+        std::cerr << "Usage: ./lbm_sim_gpu <width> <height> <wind> <tau> <steps> <save_freq> <slurm_job_number>\n";
         return 1;
     }
  

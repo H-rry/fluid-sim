@@ -23,8 +23,6 @@ SAVE_FREQ=250
 echo "Starting simulation"
 ./bin/lbm_sim_cpu $WIDTH $HEIGHT $INITIAL_U_X $TAU $MAX_STEPS $SAVE_FREQ $SLURM_JOB_ID
 
-
-
 echo "Simulation complete, Rendering video..."
 
 source venv/bin/activate 
