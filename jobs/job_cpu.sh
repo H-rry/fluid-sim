@@ -24,8 +24,7 @@ echo "Starting simulation"
 
 echo "Simulation complete, Rendering video..."
 
-source venv/bin/activate 
-python plot.py $WIDTH $HEIGHT $INITIAL_U_X $SLURM_JOB_ID
+./venv/bin/python3 plot.py $WIDTH $HEIGHT $INITIAL_U_X $SLURM_JOB_ID
 
 echo "Render finished"
 
