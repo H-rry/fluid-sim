@@ -17,7 +17,7 @@ export PATH=/shared/apps/ubuntu/opt/rocm-7.2.0/llvm/bin:$PATH
 
 # 3. Render the video
 echo "Simulation complete! Rendering video..."
-python plot.py
+python3 scripts/plot.py
 
 echo "Pipeline finished completely!"
 
