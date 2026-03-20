@@ -24,11 +24,11 @@ GPU_TARGET = gpu
 all: $(CPU_TARGET)
 
 $(CPU_TARGET): src/main_sim_cpu.cpp src/fluids_cpu.hpp
-	mkdir bin
+	mkdir -p bin
 	$(CXX) $(CXXFLAGS) src/main_sim_cpu.cpp -o bin/lbm_sim_cpu
 
 $(GPU_TARGET): src/main_sim_gpu.cpp src/fluids_gpu.hpp
-	mkdir bin
+	mkdir -p bin
 	$(GXX) $(GXXFLAGS) src/main_sim_gpu.cpp -o bin/lbm_sim_gpu
 
 clean:
