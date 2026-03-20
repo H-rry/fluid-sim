@@ -72,7 +72,7 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     double y_center = height * 0.5;    
     
     // 2. Angle of Attack (AoA) Setup
-    constexpr double AoA_degrees = 10.0; // Pitch nose UP by 15 degrees
+    constexpr double AoA_degrees = 10.0; // Pitch nose UP by 10 degrees
     constexpr double pi = 3.14159265358979323846;
     constexpr double AoA_radians = AoA_degrees * pi / 180.0;
     
@@ -84,15 +84,16 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     double dx = x - pivot_x;
     double dy = y - pivot_y;
     
-    // 4. Apply 2D Rotation Matrix
-    // We rotate the grid coordinates backwards to map them to the flat airfoil math
-    double rot_x = dx * std::cos(AoA_radians) - dy * std::sin(AoA_radians);
-    double rot_y = dx * std::sin(AoA_radians) + dy * std::cos(AoA_radians);
+    // 4. Corrected 2D Rotation Matrix (Inverse Rotation)
+    // We must rotate the grid coordinates BACKWARDS (-AoA) to map them to the flat airfoil.
+    // Notice the flipped signs on the sin() terms compared to your original code.
+    double rot_x =  dx * std::cos(AoA_radians) + dy * std::sin(AoA_radians);
+    double rot_y = -dx * std::sin(AoA_radians) + dy * std::cos(AoA_radians);
     
     double mapped_x = rot_x + pivot_x;
     double mapped_y = rot_y + pivot_y;
 
-    // --- The rest is identical to the previous NACA 4415 math ---
+    // --- The NACA 4415 Math ---
     
     constexpr double thickness = 0.075; 
     constexpr double m = 0.04;         
@@ -127,10 +128,14 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     double half_thickness_pixels = yt * chord;
     double camber_pixels = yc * chord;
 
+    // 5. Y-Axis Direction Check
+    // Assuming a standard physics grid where +Y is UP. 
+    // If your grid uses +Y as DOWN (like an image pixel array), change this to: y_center - camber_pixels
     double wing_center_at_x = y_center + camber_pixels;
     
     // Check if the mapped_y coordinate is within the curved envelope
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
+}
 }
 
 inline void step_fluid(int t) noexcept{
