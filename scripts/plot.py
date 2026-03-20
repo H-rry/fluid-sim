@@ -22,14 +22,20 @@ num_frames = len(data) // nodes_per_frame
 print(f"Loaded {num_frames} frames in {round(time.time() - start_time, 3)} seconds!")
 
 # Colours the airfoil 
-grid_data = data.reshape((num_frames, height, width))
+last_frame = grid_data[-1]
+solid_mask = np.isnan(last_frame) | (last_frame == 0.0)
 
-wing_mask = np.all(grid_data < 1e-5, axis=0)
+# Create a blank RGBA image (Height, Width, 4 channels for Red, Green, Blue, Alpha)
+wing_overlay = np.zeros((height, width, 4))
 
-grid_data[:, wing_mask] = np.nan
+# Fill the detected solid pixels with a solid color! 
+# [0.7, 0.7, 0.7, 1.0] is a sleek Light Gray. 
+# (You could change this to [1.0, 1.0, 1.0, 1.0] for bright white)
+wing_overlay[solid_mask] = [0.7, 0.7, 0.8, 1.0]
 
-cmap = plt.get_cmap('magma').copy()
-cmap.set_bad(color='cyan')
+# Slap this overlay permanently on top of the fluid plot
+ax.imshow(wing_overlay, origin='lower')
+
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax.set_facecolor('black')
