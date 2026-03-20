@@ -22,6 +22,8 @@ num_frames = len(data) // nodes_per_frame
 print(f"Loaded {num_frames} frames in {round(time.time() - start_time, 3)} seconds!")
 
 # Colours the airfoil 
+grid_data = data.reshape((num_frames, height, width))
+
 last_frame = grid_data[-1]
 solid_mask = np.isnan(last_frame) | (last_frame == 0.0)
 
