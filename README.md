@@ -2,7 +2,7 @@
 A fast C++ fluid simulation designed specifically to learn the parallelisation process on HPCs
 
 
-<img src="media/airfoil_demo.gif" alt="Airfoil Wake Simulation" width="400">
+<img src="media/airfoil_demo.gif" alt="Airfoil Wake Simulation" width="528">
 
 
 ## Instructions and initial set-up
