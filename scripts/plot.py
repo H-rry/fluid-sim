@@ -21,10 +21,19 @@ nodes_per_frame = width * height
 num_frames = len(data) // nodes_per_frame
 print(f"Loaded {num_frames} frames in {round(time.time() - start_time, 3)} seconds!")
 
+# Colours the airfoil 
 grid_data = data.reshape((num_frames, height, width))
+
+wing_mask = np.all(grid_data < 1e-5, axis=0)
+
+grid_data[:, wing_mask] = np.nan
+
+cmap = plt.get_cmap('magma').copy()
+cmap.set_bad(color='cyan')
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax.set_facecolor('black')
+
 
 cax = ax.imshow(grid_data[0], origin='lower', cmap='magma', vmin=0.0, vmax=(estimated_max_u_x))
 ax.set_title("LBM wind tunnel simulation")
