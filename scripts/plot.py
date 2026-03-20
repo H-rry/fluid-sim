@@ -32,7 +32,7 @@ last_frame = grid_data[-1]
 solid_mask = np.isnan(last_frame) | (last_frame == 0.0)
 
 wing_overlay = np.zeros((height, width, 4))
-wing_overlay[solid_mask] = [0.7, 0.7, 0.8, 1.0]
+wing_overlay[solid_mask] = [0.2, 0.2, 0.5, 1.0]
 
 ax.imshow(wing_overlay, origin='lower')
 

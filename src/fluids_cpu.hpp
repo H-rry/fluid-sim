@@ -65,49 +65,43 @@ inline void init_fluid( double initial_rho, double  initial_u_x, double initial_
     }
 }
 
+#include <cmath>
+
 inline bool is_inside_airfoil(int x, int y) noexcept {
-    // 1. Scale geometry relative to your grid dimensions
+    // 1. Scale geometry
     double chord = width * 0.4;        
     double x_start = width * 0.25;     
     double y_center = height * 0.5;    
     
-    // 2. Angle of Attack (AoA) Setup
-    constexpr double AoA_degrees = 10.0; // Pitch nose UP by 10 degrees
+    // 2. Angle of Attack - Lowered to 4 degrees to PREVENT STALLING
+    constexpr double AoA_degrees = 4.0; // Pitch nose UP gently
     constexpr double pi = 3.14159265358979323846;
     constexpr double AoA_radians = AoA_degrees * pi / 180.0;
     
-    // 3. Define the Pivot Point (The Aerodynamic Center at 25% chord)
+    // 3. Define the Pivot Point (25% chord)
     double pivot_x = x_start + (chord * 0.25);
     double pivot_y = y_center;
     
-    // Get the current node's position relative to the pivot
     double dx = x - pivot_x;
     double dy = y - pivot_y;
     
-    // 4. Corrected 2D Rotation Matrix (Inverse Rotation)
-    // We must rotate the grid coordinates BACKWARDS (-AoA) to map them to the flat airfoil.
-    // Notice the flipped signs on the sin() terms compared to your original code.
-    double rot_x =  dx * std::cos(AoA_radians) + dy * std::sin(AoA_radians);
-    double rot_y = -dx * std::sin(AoA_radians) + dy * std::cos(AoA_radians);
+    // 4. Forward Rotation Matrix (Pitches Nose UP)
+    double rot_x = dx * std::cos(AoA_radians) - dy * std::sin(AoA_radians);
+    double rot_y = dx * std::sin(AoA_radians) + dy * std::cos(AoA_radians);
     
     double mapped_x = rot_x + pivot_x;
     double mapped_y = rot_y + pivot_y;
 
     // --- The NACA 4415 Math ---
-    
     constexpr double thickness = 0.075; 
     constexpr double m = 0.04;         
     constexpr double p = 0.4;          
 
-    // Normalize mapped_x position along the chord (0.0 to 1.0)
     double xc = (mapped_x - x_start) / chord;
-
-    // If pixel is outside the wing's bounding box, skip
     if (xc < 0.0 || xc > 1.0) {
         return false;
     }
 
-    // Calculate the symmetrical half-thickness
     double yt = 5.0 * thickness * (
           0.2969 * std::sqrt(xc) 
         - 0.1260 * xc 
@@ -116,7 +110,6 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
         - 0.1015 * xc * xc * xc * xc
     );
 
-    // Calculate the Camber Line
     double yc = 0.0;
     if (xc >= 0.0 && xc <= p) {
         yc = (m / (p * p)) * (2.0 * p * xc - xc * xc);
@@ -124,16 +117,12 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
         yc = (m / ((1.0 - p) * (1.0 - p))) * ((1.0 - 2.0 * p) + 2.0 * p * xc - xc * xc);
     }
 
-    // Scale the normalized math back up to your grid pixels
     double half_thickness_pixels = yt * chord;
     double camber_pixels = yc * chord;
 
-    // 5. Y-Axis Direction Check
-    // Assuming a standard physics grid where +Y is UP. 
-    // If your grid uses +Y as DOWN (like an image pixel array), change this to: y_center - camber_pixels
+    // 5. Addition puts the curved hump correctly on TOP 
     double wing_center_at_x = y_center + camber_pixels;
     
-    // Check if the mapped_y coordinate is within the curved envelope
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
 
