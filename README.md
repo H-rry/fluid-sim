@@ -1,4 +1,15 @@
 # fluid-sim
+
+<div align="left">
+
+![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3670A0?style=flat&logo=python&logoColor=ffdd54)
+![OpenMP](https://img.shields.io/badge/OpenMP-Parallel_HPC-314CB6?style=flat)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)
+![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat)
+
+</div>
+
 A fast C++ fluid simulation designed specifically to learn the parallelisation process on HPCs
 
 
