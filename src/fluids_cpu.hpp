@@ -136,7 +136,6 @@ inline bool is_inside_airfoil(int x, int y) noexcept {
     // Check if the mapped_y coordinate is within the curved envelope
     return std::abs(mapped_y - wing_center_at_x) <= half_thickness_pixels;
 }
-}
 
 inline void step_fluid(int t) noexcept{
 
