@@ -43,8 +43,8 @@
 *.csv
 
 # Ignore compiled binaries
-lbm_gui
-lbm_sim
+lbm_sim_gpu
+lbm_sim_cpu
 
 # Python
 env
