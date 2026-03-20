@@ -15,6 +15,10 @@ A fast C++ fluid simulation designed specifically to learn the parallelisation p
 
 <img src="media/airfoil_demo.gif" alt="Airfoil Wake Simulation" width="528">
 
+## Physics
+___
+This is a fluid simulation that makes use of the Lattice Boltzmann Method (LBM). This differs from trying to solve the complex Navier-Stokes equations because instead, it models the fluid as a collection of particles residing on a strict grid (the lattice). During every time step, the simulation performs two highly parallelizable actions: Streaming (moving to adjacent grid cells) and Colliding (relaxing towards some equilibrium state). If we then look at the macroscopic level, these simple rules naturally create the beautiful, chaotic movements of the fluid traveling across an airfoil.
+
 
 ## Instructions and initial set-up
 ___
@@ -51,3 +55,8 @@ pip install -r requirements.txt
 deactivate
 ```
 
+## Acknowledgments
+___
+I am extreamly grateful to the following article for distilling the conceptually difficult concepts of the LBM method into a clear computational approach:
+
+[Implementation of the Lattice Boltzmann Method](https://feaforall.com/implementation-lattice-boltzmann-method-lbm/) by FEA for All.
