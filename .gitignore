@@ -50,8 +50,9 @@ lbm_sim_cpu
 env
 venv
 
-# Gif
+# Gif - but keep the one in media file
 *.gif
+!media/*.gif
 
 # Roc profiling
 roc*
