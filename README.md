@@ -42,7 +42,7 @@ sbatch job_cpu/gpu
 ___
 **Issue:** `python: command not found` when running job scripts
 
-**Cause:** HPC compute nodes typically only have `python3`, not `python`.
+**Cause:** HPC compute node struggled to find the venv python.
 
 **Fix:** If you encounter this error, run:
 ```bash
