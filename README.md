@@ -17,7 +17,7 @@ A fast C++ fluid simulation designed specifically to learn the parallelisation p
 
 ## Physics
 ___
-This is a fluid simulation that makes use of the Lattice Boltzmann Method (LBM). This differs from trying to solve the complex Navier-Stokes equations because instead, it models the fluid as a collection of particles residing on a strict grid (the lattice). During every time step, the simulation performs two highly parallelizable actions: Streaming (moving to adjacent grid cells) and Colliding (relaxing towards some equilibrium state). If we then look at the macroscopic level, these simple rules naturally create the beautiful, chaotic movements of the fluid traveling across an airfoil.
+This is a fluid simulation that makes use of the Lattice Boltzmann Method (LBM). This differs from trying to solve the complex Navier-Stokes equations because instead, it models the fluid as a collection of particles residing on a strict grid (the lattice). During every time step, the simulation performs two highly parallelisable actions: Streaming (moving to adjacent grid cells) and Colliding (relaxing towards some equilibrium state). If we then look at the macroscopic level, these simple rules naturally create the beautiful, chaotic movements of the fluid traveling across an airfoil.
 
 
 ## Instructions and initial set-up
